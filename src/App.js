@@ -1,10 +1,10 @@
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {interval, Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
-
+import './App.css';
 
 export default function App() {
-    const [sec, setSec] = useState(0);
+    const [time, setTime] = useState(0);
     const [status, setStatus] = useState(false);
 
     useEffect(() => {
@@ -14,7 +14,7 @@ export default function App() {
             .pipe(takeUntil(change))
             .subscribe(() => {
                 if (status === true) {
-                    setSec(val => val + 1000);
+                    setTime(val => val + 1000);
                 }
             });
 
@@ -30,43 +30,33 @@ export default function App() {
 
     const stop = () => {
         setStatus(false);
-        setSec(0);
+        setTime(0);
     };
 
     const reset = () => {
-        setSec(0);
+        setTime(0);
     };
 
-    let singleClick = false
-    let doubleClick = false
     const wait = () => {
-        console.log(doubleClick)
-        console.log(singleClick)
-        if (doubleClick === true) {
-            setStatus(false);
-            doubleClick = false;
-        } else if (singleClick === false) {
+        setStatus(false);
+    };
 
-            doubleClick = true
-
-            setTimeout(() => {
-                doubleClick = false
-            }, 1000);
-        }
-
-    }
 
     return (
-        <div>
-            <span> {new Date(sec).toISOString().slice(11, 19)}</span>
+        <div className={'main-box'}>
+            <div className={'display-box'}>
+                <span className={'display'}> {new Date(time).toISOString().slice(11, 19)}</span> <br/>
+            </div>
 
-            <button className="start-button" onClick={start}>Start</button>
+            <div className={'buttons'}>
+                <button className={'start-button'} onClick={start}>Start</button>
 
-            <button className="stop-button" onClick={stop}>Stop</button>
+                <button className={'stop-button'} onClick={stop}>Stop</button>
 
-            <button onClick={reset}>Reset</button>
+                <button onClick={reset} className={'reset-button'}>Reset</button>
 
-            <button onClick={wait}>Wait</button>
+                <button onDoubleClick={wait}>Wait</button>
+            </div>
         </div>
     );
 }
