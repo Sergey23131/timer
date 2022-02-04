@@ -38,16 +38,21 @@ export default function App() {
     };
 
     let singleClick = false
-    let doubleClick
-    const wait = (e) => {
-
+    let doubleClick = false
+    const wait = () => {
+        console.log(doubleClick)
+        console.log(singleClick)
         if (doubleClick === true) {
             setStatus(false);
             doubleClick = false;
-        } else if (singleClick === false)
+        } else if (singleClick === false) {
+
+            doubleClick = true
+
             setTimeout(() => {
-                doubleClick = true
+                doubleClick = false
             }, 1000);
+        }
 
     }
 
