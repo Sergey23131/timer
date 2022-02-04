@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {interval, Subject} from "rxjs";
-import {takeUntil} from "rxjs/operators";
+import {buffer, filter, fromEvent, interval, Subject} from "rxjs";
+import {debounceTime, map, takeUntil} from "rxjs/operators";
 import './App.css';
 
 export default function App() {
@@ -24,7 +24,7 @@ export default function App() {
         };
     }, [status]);
 
-    const start = () => {
+    const starts = () => {
         setStatus(true);
     };
 
@@ -37,10 +37,20 @@ export default function App() {
         setTime(0);
     };
 
-    const wait = () => {
-        setStatus(false);
-    };
+    useEffect(() => {
+        const click$ = fromEvent(document.getElementById('waitButton'), 'click');
+        const buff$ = click$.pipe(debounceTime(300));
 
+        click$.pipe(
+            buffer(buff$),
+            map((queue) => queue.length),
+            filter((clicks) => clicks === 2)
+        )
+            .subscribe((value => {
+                setStatus(false);
+            }))
+
+    }, []);
 
     return (
         <div className={'main-box'}>
@@ -49,13 +59,13 @@ export default function App() {
             </div>
 
             <div className={'buttons'}>
-                <button className={'start-button'} onClick={start}>Start</button>
+                <button className={'start-button'} onClick={starts}>Start</button>
 
                 <button className={'stop-button'} onClick={stop}>Stop</button>
 
-                <button onClick={reset} className={'reset-button'}>Reset</button>
+                <button className={'reset-button'} onClick={reset}>Reset</button>
 
-                <button onDoubleClick={wait}>Wait</button>
+                <button id="waitButton">Wait</button>
             </div>
         </div>
     );
